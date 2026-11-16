@@ -24,12 +24,24 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Secretos de Firebase (solo dice si existen, nunca el valor)
+        env:
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+        run: |
+          for v in VITE_FIREBASE_API_KEY VITE_FIREBASE_AUTH_DOMAIN VITE_FIREBASE_PROJECT_ID VITE_FIREBASE_STORAGE_BUCKET VITE_FIREBASE_MESSAGING_SENDER_ID VITE_FIREBASE_APP_ID; do
+            if [ -n "${!v}" ]; then echo "$v: configurado"; else echo "$v: FALTA"; fi
+          done
       - name: Typecheck
         run: npm run typecheck
       - name: Pruebas
         run: npm test
       - name: Build
-        run: npm run build
+        run: npm run build && test -f dist/index.html && ls dist dist/assets
         env:
           # Si estos secretos no existen, la app se publica en MODO DEMO (datos de ejemplo).
           VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}

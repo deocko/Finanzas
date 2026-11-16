@@ -1,0 +1,30 @@
+name: Verificar sitio en vivo
+
+# Corre después de cada despliegue (y a mano) contra la URL publicada.
+on:
+  workflow_run:
+    workflows: ['Desplegar en GitHub Pages']
+    types: [completed]
+  workflow_dispatch:
+
+jobs:
+  verificar:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Código HTTP de las URLs
+        run: |
+          for u in "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/" \
+                   "https://${{ github.repository_owner }}.github.io/finanzas/" \
+                   "https://${{ github.repository_owner }}.github.io/Finanzas/"; do
+            echo "$u → $(curl -s -o /dev/null -w '%{http_code}' "$u")"
+          done
+          echo "--- HTML servido ---"
+          curl -s "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/" | grep -oE '<title>[^<]*</title>|assets/[A-Za-z0-9_.-]+\.(js|css)' | sort -u
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm i --no-save --no-package-lock playwright@1.65.1 && npx playwright install --with-deps chromium
+      - name: Recorrido en 390 px y escritorio, claro y oscuro
+        run: node scripts/smoke.mjs "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
