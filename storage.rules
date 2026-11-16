@@ -1,0 +1,21 @@
+rules_version = '2';
+
+// Solo se usa si VITE_TICKETS_BACKEND=storage (requiere plan Blaze).
+// Reemplaza TU_CORREO@gmail.com por tu correo de Google.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /users/{uid}/tickets/{file} {
+      allow read, delete: if request.auth != null
+        && request.auth.uid == uid
+        && request.auth.token.email == 'TU_CORREO@gmail.com';
+      allow create, update: if request.auth != null
+        && request.auth.uid == uid
+        && request.auth.token.email == 'TU_CORREO@gmail.com'
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+    match /{all=**} {
+      allow read, write: if false;
+    }
+  }
+}
