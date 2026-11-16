@@ -52,7 +52,7 @@ export function Panel({ title, action, children, className }: { title?: ReactNod
   return (
     <section className={cx('min-w-0 rounded-card bg-surface p-4 shadow-card sm:p-6', className)}>
       {(title || action) && (
-        <div className="mb-4 flex min-h-11 items-center justify-between gap-2">
+        <div className="mb-4 flex min-h-11 flex-wrap items-center justify-between gap-2">
           {title && <h2 className="text-lg font-bold text-ink">{title}</h2>}
           {action}
         </div>
