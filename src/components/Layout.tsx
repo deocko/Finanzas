@@ -1,7 +1,7 @@
 import { useMemo, type ReactNode } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
-  ArrowLeftRight, Bell, CalendarClock, ChartColumn, CreditCard, HeartPulse, House, Landmark, MailPlus, Menu, Minus, Moon, Plus, Settings, ShoppingCart, Sun, TrendingUp,
+  ArrowLeftRight, Bell, Repeat, Tags, CalendarClock, ChartColumn, CreditCard, HeartPulse, House, Landmark, MailPlus, Menu, Minus, Moon, Plus, Settings, ShoppingCart, Sun, TrendingUp,
 } from 'lucide-react';
 import { useCol, useData } from '../data/DataContext';
 import { dueItems } from '../lib/finance';
@@ -17,6 +17,8 @@ const NAV = [
   { to: '/vencimientos', label: 'Vencimientos', icon: CalendarClock, mobile: true },
   { to: '/importar', label: 'Importar', icon: MailPlus, mobile: false },
   { to: '/cuentas', label: 'Cuentas', icon: Landmark, mobile: false },
+  { to: '/recurrentes', label: 'Recurrentes', icon: Repeat, mobile: false },
+  { to: '/rubros', label: 'Rubros', icon: Tags, mobile: false },
   { to: '/salud', label: 'Salud financiera', icon: HeartPulse, mobile: false },
   { to: '/despensa', label: 'Despensa', icon: ShoppingCart, mobile: false },
   { to: '/inversiones', label: 'Inversiones', icon: TrendingUp, mobile: false },

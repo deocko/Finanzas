@@ -95,6 +95,12 @@ function fold(s: string): string {
   return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 }
 
+/** ¿La palabra es una categoría de la app o un sinónimo conocido? (Mensaje 4: lo demás es concepto nuevo.) */
+export function isKnownCategoryTerm(raw: string): boolean {
+  const k = fold(raw);
+  return k in CATEGORIES || k in CATEGORY_ALIASES;
+}
+
 /** Normaliza una categoría sugerida a una de la app. `exact` indica si coincidió tal cual. */
 export function mapCategory(raw: unknown): { category: ExpenseCategory; exact: boolean } {
   if (typeof raw !== 'string' || !raw.trim()) return { category: 'otros', exact: false };
@@ -369,6 +375,8 @@ export interface ConfirmEdits {
   category?: ExpenseCategory;
   amount?: Cents;
   accountId?: string | null;
+  /** Rubro del catálogo (Mensaje 4). Sin valor = el sugerido del renglón. */
+  rubroId?: string;
 }
 
 export type ConfirmResult =
@@ -381,7 +389,9 @@ function methodFor(type: IngestType, account: Account | undefined): PaymentMetho
   if (type === 'retiro_efectivo') return 'efectivo';
   switch (account?.kind) {
     case 'efectivo': return 'efectivo';
-    case 'tarjeta_credito': return 'credito';
+    case 'tarjeta_credito':
+    case 'tarjeta_servicios':
+    case 'tarjeta': return 'credito';
     case 'mercado_pago': return 'transferencia';
     default: return 'debito';
   }

@@ -6,7 +6,7 @@ import { chromium } from 'playwright';
 
 const BASE = process.argv[2];
 if (!BASE) throw new Error('Falta la URL');
-const ROUTES = ['', 'movimientos', 'movimientos?tab=ingresos', 'tarjetas', 'vencimientos', 'despensa', 'inversiones', 'reportes', 'ajustes', 'mas'];
+const ROUTES = ['', 'movimientos', 'movimientos?tab=ingresos', 'tarjetas', 'vencimientos', 'despensa', 'inversiones', 'reportes', 'ajustes', 'mas', 'importar', 'cuentas', 'recurrentes', 'rubros'];
 const problems = [];
 
 const browser = await chromium.launch();

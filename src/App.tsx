@@ -21,10 +21,15 @@ import { More } from './pages/More';
 import { ImportPage } from './pages/Import';
 import { AccountsPage } from './pages/Accounts';
 import { HealthPage } from './pages/Health';
+import { AccountDetailPage } from './pages/AccountDetail';
+import { RecurringPage } from './pages/Recurring';
+import { RubrosPage } from './pages/Rubros';
+import { SetupRunner } from './data/SetupRunner';
 
 function Shell({ store, exit, userLabel, onResetDemo }: { store: DataStore; exit?: () => void; userLabel?: string; onResetDemo?: (withExamples: boolean) => void }) {
   return (
     <DataProvider store={store} exit={exit} userLabel={userLabel}>
+      <SetupRunner />
       <HashRouter>
         <SheetHost>
           <Layout>
@@ -40,6 +45,9 @@ function Shell({ store, exit, userLabel, onResetDemo }: { store: DataStore; exit
               <Route path="/mas" element={<More />} />
               <Route path="/importar" element={<ImportPage />} />
               <Route path="/cuentas" element={<AccountsPage />} />
+              <Route path="/cuentas/:id" element={<AccountDetailPage />} />
+              <Route path="/recurrentes" element={<RecurringPage />} />
+              <Route path="/rubros" element={<RubrosPage />} />
               <Route path="/salud" element={<HealthPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
