@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "source": "gmail",
+  "detected_at": "2026-11-17T10:00:00-06:00",
+  "expenses": [
+    {
+      "id": "ejemplo-2026-11-16-amazon-74299-702-0000000-0000001",
+      "date": "2026-11-16",
+      "merchant": "Amazon México",
+      "description": "Pedido 702-0000000-0000001 (EJEMPLO)",
+      "amount_cents": 74299,
+      "currency": "MXN",
+      "type": "compra",
+      "category_suggested": "hogar",
+      "account_hint": "tarjeta ****0193",
+      "reference": "702-0000000-0000001",
+      "source_message": "gmail:ejemplo-0001"
+    },
+    {
+      "id": "ejemplo-2026-11-15-mercadopago-35000-MP0000000001",
+      "date": "2026-11-15",
+      "merchant": "Mercado Pago",
+      "description": "Pago en Tienda de Ejemplo (EJEMPLO)",
+      "amount_cents": 35000,
+      "currency": "MXN",
+      "type": "compra",
+      "category_suggested": "despensa",
+      "account_hint": "Mercado Pago",
+      "reference": "MP0000000001",
+      "source_message": "gmail:ejemplo-0002"
+    },
+    {
+      "id": "ejemplo-2026-11-14-transferencia-150000-RASTREO0000000001",
+      "date": "2026-11-14",
+      "merchant": "Transferencia SPEI a Persona de Ejemplo",
+      "description": "Pago de renta (EJEMPLO)",
+      "amount_cents": 150000,
+      "currency": "MXN",
+      "type": "transferencia",
+      "direction": "salida",
+      "category_suggested": "mantenimiento",
+      "account_hint": "cuenta ****0193",
+      "reference": "RASTREO0000000001",
+      "source_message": "gmail:ejemplo-0003"
+    },
+    {
+      "id": "ejemplo-2026-11-13-retiro-200000-CAJERO01",
+      "date": "2026-11-13",
+      "merchant": "Cajero automático Banco Ejemplo",
+      "description": "Retiro de efectivo (EJEMPLO)",
+      "amount_cents": 200000,
+      "currency": "MXN",
+      "type": "retiro_efectivo",
+      "category_suggested": "otros",
+      "account_hint": "tarjeta ****0193",
+      "reference": "CAJERO01",
+      "source_message": "gmail:ejemplo-0004"
+    },
+    {
+      "id": "ejemplo-2026-11-12-netflix-29900-NFX0001",
+      "date": "2026-11-12",
+      "merchant": "Netflix",
+      "description": "Plan Estándar mensual (EJEMPLO)",
+      "amount_cents": 29900,
+      "currency": "MXN",
+      "type": "suscripcion",
+      "category_suggested": "ocio",
+      "account_hint": "tarjeta ****0193",
+      "reference": "NFX0001",
+      "source_message": "gmail:ejemplo-0005"
+    },
+    {
+      "id": "ejemplo-2026-11-10-amazon-reembolso-12000-702-0000000-0000000",
+      "date": "2026-11-10",
+      "merchant": "Amazon México",
+      "description": "Reembolso de pedido 702-0000000-0000000 (EJEMPLO)",
+      "amount_cents": 12000,
+      "currency": "MXN",
+      "type": "reembolso",
+      "category_suggested": "otros",
+      "account_hint": "tarjeta ****0193",
+      "reference": "702-0000000-0000000",
+      "source_message": "gmail:ejemplo-0006"
+    }
+  ]
+}

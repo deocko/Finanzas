@@ -19,7 +19,10 @@ App web personal para controlar ingresos, gastos, tarjetas, vencimientos, despen
 | **Despensa** | Compras con tienda, total y foto del ticket. |
 | **Inversiones** | Cripto con precio en vivo (CoinGecko, gratis) y ganancia/pérdida. Fondos con captura manual del valor. |
 | **Reportes** | Ingresos vs gastos por mes, evolución del balance acumulado, gasto por categoría, tabla mensual, CSV. |
-| **Ajustes** | Sueldo y prestaciones, respaldo completo en JSON y CSV, cerrar sesión. |
+| **Ajustes** | Sueldo y prestaciones, hábitos y salud financiera (50/30/20, fondo de emergencia, regla de 24 h, presupuestos, reglas por comercio), respaldo completo en JSON y CSV, cerrar sesión. |
+| **Importar** | Pega o carga el JSON que Byte genera desde Gmail y Outlook. Valida, deduplica por `id` y deja cada gasto pendiente: confirmar uno o varios, editar categoría/monto/cuenta o descartar. Historial de importaciones. Formato: [`docs/ingesta-correo.md`](docs/ingesta-correo.md). |
+| **Cuentas** | Banco, efectivo, Mercado Pago, etc. con saldo inicial; el saldo se lleva solo con los movimientos confirmados. Gastos «por asignar» y movimientos entre cuentas (aportes al fondo). |
+| **Salud financiera** | Resumen semanal con 1 a 3 recomendaciones, alertas (presupuesto 80 % / excedido, cargo inusual, renovación de suscripción, posible duplicado, saldo bajo, fondo de emergencia), regla 50/30/20 real vs meta, progreso del fondo y auditoría de suscripciones. Solo avisa: nunca mueve dinero ni confirma nada. |
 
 Dinero en **centavos enteros** (nunca flotantes). Cálculos probados en `src/lib/*.test.ts`.
 
@@ -88,5 +91,4 @@ Sin secretos de Firebase la página publica la demo con datos de ejemplo; con se
 
 - OCR del ticket (Tesseract.js en el navegador) para prellenar el total.
 - Recordatorios push o por correo antes de cada vencimiento.
-- Presupuesto mensual por categoría con alertas.
 - PWA completa con captura sin conexión (hoy ya es instalable y Firestore guarda caché local).

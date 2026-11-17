@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
-import { Camera, ImagePlus, Trash2 } from 'lucide-react';
+import { Camera, Hourglass, ImagePlus, Trash2 } from 'lucide-react';
 import { CATEGORIES, CATEGORY_ORDER, PAYMENT_METHODS } from '../lib/catalog';
-import { centsToInput, parseToCents } from '../lib/money';
+import { centsToInput, formatMXN, parseToCents } from '../lib/money';
 import { todayISO } from '../lib/dates';
 import type { Expense, ExpenseCategory, PaymentMethod } from '../lib/types';
-import { useCol, useData, humanError } from '../data/DataContext';
+import { useCol, useData, useHabits, humanError } from '../data/DataContext';
+import { suggestWait24h } from '../lib/health';
 import { CATEGORY_ICONS } from './icons';
 import { Button, MoneyInput, SelectInput, TextInput, cx, useToast } from './ui';
 
@@ -29,6 +30,11 @@ export function ExpenseForm({ initial, presetCategory, onDone }: ExpenseFormProp
   const [keepTicket, setKeepTicket] = useState(!!initial?.ticketRef);
   const [errors, setErrors] = useState<{ amount?: string; category?: string }>({});
   const [saving, setSaving] = useState(false);
+  const habits = useHabits();
+  const accounts = useCol('accounts').items;
+  const [accountId, setAccountId] = useState(initial?.accountId ?? '');
+  const cents0 = parseToCents(amount) ?? 0;
+  const wait24 = !initial && !!category && suggestWait24h(cents0, category, habits);
 
   const preview = useMemo(() => (photo ? URL.createObjectURL(photo) : null), [photo]);
   useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
@@ -61,6 +67,7 @@ export function ExpenseForm({ initial, presetCategory, onDone }: ExpenseFormProp
         method,
         cardId: methodCards.some((c) => c.id === cardId) ? cardId : undefined,
         store: category === 'despensa' && store_.trim() ? store_.trim() : undefined,
+        accountId: accounts.some((a) => a.id === accountId) ? accountId : undefined,
         ticketRef,
       };
       if (initial) await store.update('expenses', initial.id, data);
@@ -107,6 +114,13 @@ export function ExpenseForm({ initial, presetCategory, onDone }: ExpenseFormProp
         {errors.category && <p className="mt-1 text-xs font-semibold text-danger" role="alert">{errors.category}</p>}
       </fieldset>
 
+      {wait24 && (
+        <p className="flex gap-2 rounded-control bg-warn-soft p-3 text-sm text-ink" role="note" data-testid="regla-24h">
+          <Hourglass className="size-5 shrink-0 text-warn" aria-hidden />
+          <span><span className="font-semibold">Regla de 24 horas:</span> es una compra no esencial mayor a {formatMXN(habits.impulseThreshold)}. Si aún no la haces, considera esperar un día antes de comprar. Tú decides.</span>
+        </p>
+      )}
+
       <Button type="submit" className="w-full" loading={saving}>Guardar gasto</Button>
 
       <details className="group rounded-control border border-line" open={!!initial || category === 'despensa'}>
@@ -125,6 +139,12 @@ export function ExpenseForm({ initial, presetCategory, onDone }: ExpenseFormProp
             <SelectInput label="Tarjeta" value={cardId} onChange={(e) => setCardId(e.target.value)}>
               <option value="">Sin especificar</option>
               {methodCards.map((c) => <option key={c.id} value={c.id}>{c.alias || c.bank} •{c.last4}</option>)}
+            </SelectInput>
+          )}
+          {accounts.length > 0 && (
+            <SelectInput label="Cuenta" value={accountId} onChange={(e) => setAccountId(e.target.value)} hint="Se descuenta del saldo de esa cuenta">
+              <option value="">Sin especificar</option>
+              {accounts.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
             </SelectInput>
           )}
           {category === 'despensa' && (

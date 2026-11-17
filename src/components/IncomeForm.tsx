@@ -7,8 +7,9 @@ import {
   AGUINALDO_DIAS_MINIMOS, PRIMA_VACACIONAL_MINIMA, calcularAguinaldo, calcularPrimaVacacional, diasVacacionesLFT, salarioDiarioDesdeMensual,
 } from '../lib/payroll';
 import type { Income, IncomeType } from '../lib/types';
-import { useData, useSettings, humanError } from '../data/DataContext';
-import { Button, MoneyInput, Segmented, TextInput, useToast } from './ui';
+import { useCol, useData, useHabits, useSettings, humanError } from '../data/DataContext';
+import { paySelfFirst } from '../lib/health';
+import { Button, MoneyInput, Segmented, SelectInput, TextInput, useToast } from './ui';
 
 export function IncomeForm({ initial, onDone, presetType }: { initial?: Income; presetType?: IncomeType; onDone: () => void }) {
   const { store } = useData();
@@ -30,6 +31,9 @@ export function IncomeForm({ initial, onDone, presetType }: { initial?: Income; 
   const [porcentaje, setPorcentaje] = useState(String(initial?.calc?.porcentaje ?? settings.primaPorcentaje ?? 25));
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const habits = useHabits();
+  const accounts = useCol('accounts').items;
+  const [accountId, setAccountId] = useState(initial?.accountId ?? '');
 
   const dailyCents = parseToCents(daily) ?? 0;
   const ag = calcularAguinaldo({
@@ -56,6 +60,7 @@ export function IncomeForm({ initial, onDone, presetType }: { initial?: Income; 
         type,
         amount: cents,
         concept: concept.trim() || INCOME_TYPES[type].label,
+        accountId: accounts.some((a) => a.id === accountId) ? accountId : undefined,
         calc:
           type === 'aguinaldo'
             ? { salarioDiario: dailyCents, dias: ag.diasAplicados, diasTrabajados: Number(diasTrabajados) || 0 }
@@ -65,7 +70,8 @@ export function IncomeForm({ initial, onDone, presetType }: { initial?: Income; 
       };
       if (initial) await store.update('incomes', initial.id, data);
       else await store.add('incomes', data);
-      toast(initial ? 'Ingreso actualizado' : 'Ingreso registrado');
+      const save = paySelfFirst(cents, habits);
+      toast(initial ? 'Ingreso actualizado' : save > 0 ? `Ingreso registrado. Págate primero: aparta ${formatMXN(save)} para ahorro.` : 'Ingreso registrado');
       onDone();
     } catch (err) {
       toast(humanError(err), 'error');
@@ -163,6 +169,23 @@ export function IncomeForm({ initial, onDone, presetType }: { initial?: Income; 
             Cálculo bruto según la LFT (art. 87 aguinaldo, art. 76 y 80 vacaciones y prima). No descuenta ISR.
           </p>
         </>
+      )}
+
+      {(() => {
+        const c = computed ?? parseToCents(amount) ?? 0;
+        const s = paySelfFirst(c, habits);
+        return c > 0 && s > 0 && !initial ? (
+          <p className="rounded-control bg-ok-soft p-3 text-sm text-ink" data-testid="pagate-primero">
+            <span className="font-semibold">Págate primero:</span> antes de gastar, aparta <span className="num font-bold">{formatMXN(s)}</span> ({habits.savingsPct} %) para tu ahorro.
+          </p>
+        ) : null;
+      })()}
+
+      {accounts.length > 0 && (
+        <SelectInput label="Cuenta donde entra" value={accountId} onChange={(e) => setAccountId(e.target.value)}>
+          <option value="">Sin especificar</option>
+          {accounts.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+        </SelectInput>
       )}
 
       <div className="grid grid-cols-2 gap-3">

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowDownRight, ArrowUpRight, BellRing, ChartPie, ChevronRight, CreditCard, Wallet } from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, BellRing, ChartPie, ChevronRight, CreditCard, Inbox, Lightbulb, Wallet } from 'lucide-react';
 import { useCol, useData } from '../data/DataContext';
 import { cardTotals, dueItems, expensesByCategory, monthSummary } from '../lib/finance';
 import { formatPeriod, periodOf, todayISO } from '../lib/dates';
@@ -9,6 +9,8 @@ import { CategoryBars } from '../components/charts';
 import { DueRow, ExpenseRow, IncomeRow, daysText } from '../components/rows';
 import { useSheet } from '../components/SheetHost';
 import { Button, EmptyState, ErrorState, ListSkeleton, Panel, Skeleton, cx } from '../components/ui';
+import { useHealth } from '../data/useHealth';
+import { AlertsPanel } from './Health';
 
 export function Dashboard() {
   const { retry } = useData();
@@ -17,6 +19,8 @@ export function Dashboard() {
   const cards = useCol('cards');
   const bills = useCol('bills');
   const open = useSheet();
+  const health = useHealth();
+  const pendingImports = useCol('inbox').items.filter((i) => i.status === 'pendiente').length;
   const today = todayISO();
   const period = periodOf(today);
 
@@ -63,6 +67,14 @@ export function Dashboard() {
         </Link>
       )}
 
+      {pendingImports > 0 && (
+        <Link to="/importar" className="flex items-center gap-3 rounded-card border-2 border-brand bg-brand-soft p-4 text-ink">
+          <Inbox className="size-6 shrink-0 text-brand" aria-hidden />
+          <p className="min-w-0 flex-1 font-bold">{pendingImports === 1 ? '1 movimiento del correo por confirmar' : `${pendingImports} movimientos del correo por confirmar`}</p>
+          <ChevronRight className="size-5 shrink-0" aria-hidden />
+        </Link>
+      )}
+
       {/* Balance del mes */}
       <section className="rounded-card bg-brand p-6 text-brand-ink shadow-card" aria-labelledby="bal">
         <p id="bal" className="text-sm font-semibold opacity-90">Balance del mes</p>
@@ -84,6 +96,13 @@ export function Dashboard() {
       </section>
 
       <div className="grid gap-6 lg:grid-cols-2">
+        <Panel title={<span className="flex items-center gap-2"><Lightbulb className="size-5" aria-hidden /> Resumen semanal</span>} action={<Link to="/salud" className="flex min-h-11 items-center px-2 text-sm font-semibold text-brand">Salud financiera</Link>}>
+          <ol className="list-decimal space-y-2 pl-5 text-sm text-ink">
+            {health.weekly.recs.map((x) => <li key={x.id}>{x.text}</li>)}
+          </ol>
+        </Panel>
+        <AlertsPanel alerts={health.alerts} limit={3} />
+
         <Panel title="Gasto por categoría" action={<Link to="/reportes" className="flex min-h-11 items-center px-2 text-sm font-semibold text-brand">Reportes</Link>}>
           {expenses.loading ? (
             <ListSkeleton />
