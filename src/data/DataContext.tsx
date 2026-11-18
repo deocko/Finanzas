@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { CollectionMap, CollectionName, Settings } from '../lib/types';
-import { COLLECTIONS, SETTINGS_ID } from '../lib/types';
+import { COLLECTIONS, HABITS_ID, SETTINGS_ID } from '../lib/types';
+import { withDefaults, type HabitsData } from '../lib/health';
 import type { DataStore } from './store';
 
 export interface ColState<K extends CollectionName> {
@@ -88,4 +89,11 @@ export function humanError(e: unknown): string {
   if (code.includes('unauthorized-domain')) return 'Este dominio no está autorizado en Firebase (Authentication → Settings → Authorized domains).';
   if (e instanceof Error && e.message) return e.message;
   return 'Ocurrió un error inesperado.';
+}
+
+/** Hábitos y salud financiera con valores iniciales para lo que Diego no haya configurado. */
+export function useHabits(): HabitsData {
+  const { items } = useCol('habits');
+  const h = items.find((i) => i.id === HABITS_ID);
+  return useMemo(() => withDefaults(h), [h]);
 }

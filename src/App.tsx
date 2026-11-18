@@ -18,6 +18,9 @@ import { Investments } from './pages/Investments';
 import { Reports } from './pages/Reports';
 import { SettingsPage } from './pages/Settings';
 import { More } from './pages/More';
+import { ImportPage } from './pages/Import';
+import { AccountsPage } from './pages/Accounts';
+import { HealthPage } from './pages/Health';
 
 function Shell({ store, exit, userLabel, onResetDemo }: { store: DataStore; exit?: () => void; userLabel?: string; onResetDemo?: (withExamples: boolean) => void }) {
   return (
@@ -35,6 +38,9 @@ function Shell({ store, exit, userLabel, onResetDemo }: { store: DataStore; exit
               <Route path="/reportes" element={<Reports />} />
               <Route path="/ajustes" element={<SettingsPage onResetDemo={onResetDemo} />} />
               <Route path="/mas" element={<More />} />
+              <Route path="/importar" element={<ImportPage />} />
+              <Route path="/cuentas" element={<AccountsPage />} />
+              <Route path="/salud" element={<HealthPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Layout>

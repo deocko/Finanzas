@@ -79,6 +79,11 @@ export async function seedDemo(store: LocalStore): Promise<void> {
   await add('funds', { name: 'Fondo de deuda (ejemplo)', institution: 'Operadora Ejemplo', invested: 5_000_000, currentValue: 5_312_000, reportedYield: 10.2, date: dateInMonth(...ym(current), 1) });
   await add('funds', { name: 'Fondo de renta variable (ejemplo)', institution: 'Operadora Demo', invested: 2_000_000, currentValue: 1_946_000, reportedYield: -2.7, date: dateInMonth(...ym(current), 1) });
 
+  // Cuentas de ejemplo (saldo inicial al día 1 del mes). "0193" coincide con docs/ejemplo-ingesta.json.
+  await add('accounts', { name: 'Nómina (ejemplo)', kind: 'banco', last4: '0193', initialBalance: 1_875_420, initialDate: dateInMonth(...ym(current), 1), lowBalanceThreshold: 300_000 });
+  await add('accounts', { name: 'Efectivo (ejemplo)', kind: 'efectivo', initialBalance: 80_000, initialDate: dateInMonth(...ym(current), 1) });
+  await add('accounts', { name: 'Mercado Pago (ejemplo)', kind: 'mercado_pago', initialBalance: 120_000, initialDate: dateInMonth(...ym(current), 1) });
+
   store.markSeeded();
 }
 

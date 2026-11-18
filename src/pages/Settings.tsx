@@ -1,5 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { Database, FileJson, FileSpreadsheet, LogOut, ShieldCheck, Trash2 } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { HabitsForm } from '../components/HabitsForm';
+import { Database, FileJson, FileSpreadsheet, LogOut, MailPlus, ShieldCheck, Trash2 } from 'lucide-react';
 import { useData, useSettings, humanError } from '../data/DataContext';
 import { firebaseConfigured, ticketBackend } from '../data/firebaseConfig';
 import { CATEGORIES, INCOME_TYPES, PAYMENT_METHODS } from '../lib/catalog';
@@ -19,6 +21,10 @@ export function SettingsPage({ onResetDemo }: { onResetDemo?: (withExamples: boo
   const [antig, setAntig] = useState(String(settings.aniosAntiguedad));
   const [prima, setPrima] = useState(String(settings.primaPorcentaje));
   const [saving, setSaving] = useState(false);
+  const loc = useLocation();
+  useEffect(() => {
+    if (loc.hash === '#habitos') document.getElementById('habitos')?.scrollIntoView();
+  }, [loc.hash]);
 
   useEffect(() => {
     setSalario(settings.salarioMensual ? centsToInput(settings.salarioMensual) : '');
@@ -100,6 +106,20 @@ export function SettingsPage({ onResetDemo }: { onResetDemo?: (withExamples: boo
           )}
           <Button type="submit" loading={saving}>Guardar prestaciones</Button>
         </form>
+      </Panel>
+
+      <div id="habitos" className="scroll-mt-20">
+        <Panel title="Hábitos y salud financiera">
+          <p className="mb-4 text-sm text-muted">Son guías y avisos: la app nunca mueve dinero, cancela suscripciones ni confirma gastos por su cuenta.</p>
+          <HabitsForm />
+        </Panel>
+      </div>
+
+      <Panel title="Importar gastos del correo">
+        <p className="mb-4 text-sm text-muted">Byte lee tu Gmail y Outlook con sus propios conectores y te entrega un archivo JSON. Aquí lo revisas y confirmas. La app no pide ni guarda credenciales de correo o banco.</p>
+        <Link to="/importar" className="inline-flex min-h-11 items-center gap-2 rounded-control border border-line bg-surface px-4 text-sm font-semibold text-ink hover:bg-surface-2">
+          <MailPlus className="size-4" aria-hidden /> Ir a Importar
+        </Link>
       </Panel>
 
       <Panel title="Respaldo de datos">

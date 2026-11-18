@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
-import { Download, Receipt, Wallet } from 'lucide-react';
-import { useSearchParams } from 'react-router-dom';
+import { Download, MailPlus, Receipt, Wallet } from 'lucide-react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useCol, useData } from '../data/DataContext';
 import { CATEGORIES, CATEGORY_ORDER, INCOME_TYPES, PAYMENT_METHODS } from '../lib/catalog';
 import { formatDate, periodOf, todayISO } from '../lib/dates';
@@ -54,7 +54,7 @@ export function Movements() {
 
   return (
     <div>
-      <PageHeader title="Movimientos" subtitle="Tus ingresos y gastos, mes por mes." action={<MonthPicker value={period} onChange={setPeriod} />} />
+      <PageHeader title="Movimientos" subtitle="Tus ingresos y gastos, mes por mes." action={<div className="flex flex-wrap items-center gap-2"><Link to="/importar" className="inline-flex min-h-11 items-center gap-2 rounded-control border border-line bg-surface px-3 text-sm font-semibold text-ink hover:bg-surface-2"><MailPlus className="size-4" aria-hidden /> Importar del correo</Link><MonthPicker value={period} onChange={setPeriod} /></div>} />
       <div className="mb-4 max-w-sm">
         <Segmented
           label="Ver"
