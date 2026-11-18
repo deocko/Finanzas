@@ -22,6 +22,9 @@ App web personal para controlar ingresos, gastos, tarjetas, vencimientos, despen
 | **Ajustes** | Sueldo y prestaciones, hábitos y salud financiera (50/30/20, fondo de emergencia, regla de 24 h, presupuestos, reglas por comercio), respaldo completo en JSON y CSV, cerrar sesión. |
 | **Importar** | Pega o carga el JSON que Byte genera desde Gmail y Outlook. Valida, deduplica por `id` y deja cada gasto pendiente: confirmar uno o varios, editar categoría/monto/cuenta o descartar. Historial de importaciones. Formato: [`docs/ingesta-correo.md`](docs/ingesta-correo.md). |
 | **Cuentas** | Banco, efectivo, Mercado Pago, etc. con saldo inicial; el saldo se lleva solo con los movimientos confirmados. Gastos «por asignar» y movimientos entre cuentas (aportes al fondo). |
+| **Cuentas (alta inicial)** | Las cuentas reales de Diego (nombre, tipo, institución) con saldo, últimos 4, corte y fecha límite **por confirmar**. Detalle por cuenta: saldo confirmado, pendientes y movimientos. |
+| **Recurrentes** | Nómina quincenal ($25,900, días 13 y 28 estimados) comparada contra lo que detecta Byte: esperado, no detectado, detectado, diferencia por confirmar, recibido. Cargos recurrentes pre-registrados con monto y fecha por confirmar. |
+| **Rubros** | Catálogo editable (agregar, renombrar, reasignar), reglas comercio → rubro y lista «por clasificar». |
 | **Salud financiera** | Resumen semanal con 1 a 3 recomendaciones, alertas (presupuesto 80 % / excedido, cargo inusual, renovación de suscripción, posible duplicado, saldo bajo, fondo de emergencia), regla 50/30/20 real vs meta, progreso del fondo y auditoría de suscripciones. Solo avisa: nunca mueve dinero ni confirma nada. |
 
 Dinero en **centavos enteros** (nunca flotantes). Cálculos probados en `src/lib/*.test.ts`.

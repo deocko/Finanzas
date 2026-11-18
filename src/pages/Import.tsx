@@ -9,10 +9,14 @@ import { centsToInput, formatMXN, parseToCents } from '../lib/money';
 import { INGEST_TYPE_LABELS, dedupeById, parseIngest, type IngestParseResult } from '../lib/ingest';
 import { chargeOfExpense, chargeOfInbox, possibleDuplicates, unusualCharge, type Charge } from '../lib/alerts';
 import type { ExpenseCategory, InboxItem } from '../lib/types';
+import { RUBRO_POR_CLASIFICAR, categoryOfRubro, suggestRubro } from '../lib/rubros';
+import { matchRecurring } from '../lib/recurring';
+import { RubroSelect } from '../components/rubroUi';
 import { Button, EmptyState, ErrorState, ListSkeleton, PageHeader, Panel, cx, useToast } from '../components/ui';
 
 interface RowEdit {
   category?: ExpenseCategory;
+  rubroId?: string;
   amount?: string;
   accountId?: string;
 }
@@ -24,6 +28,9 @@ export function ImportPage() {
   const accounts = useCol('accounts').items;
   const rules = useCol('merchantRules').items;
   const expenses = useCol('expenses').items;
+  const rubros = useCol('rubros').items;
+  const merchantRubros = useCol('merchantRubros').items;
+  const recurrings = useCol('recurrings').items;
   const habits = useHabits();
   const toast = useToast();
 
@@ -75,7 +82,7 @@ export function ImportPage() {
     if (!parsed?.ok) return;
     setBusy(true);
     try {
-      const r = await importParsed(store, parsed, { inbox: inbox.items, accounts, rules: [...rules], habits, expenses });
+      const r = await importParsed(store, parsed, { inbox: inbox.items, accounts, rules: [...rules], habits, expenses, rubros, merchantRubros: [...merchantRubros], recurrings });
       toast(`${r.nuevos} pendientes de confirmar · ${r.duplicados} duplicados${r.autoConfirmados ? ` · ${r.autoConfirmados} auto-confirmados` : ''}`);
       setText('');
       setParsed(null);
@@ -86,11 +93,19 @@ export function ImportPage() {
     }
   }
 
+  /** Rubro del renglón; los importados antes del catálogo reciben la sugerencia del comercio. */
+  function rubroOf(item: InboxItem): string | undefined {
+    if (item.rubroId) return item.rubroId;
+    if (!rubros.length) return undefined;
+    return suggestRubro(item, { rubros, merchantRubros, recurring: matchRecurring(item, recurrings) }).rubroId;
+  }
+
   function editsFor(item: InboxItem) {
     const e = edits[item.id] ?? {};
     const amount = e.amount === undefined ? undefined : parseToCents(e.amount);
     return {
       category: e.category,
+      rubroId: e.rubroId ?? rubroOf(item),
       amount: amount ?? undefined,
       accountId: e.accountId === undefined ? undefined : e.accountId === '' ? null : e.accountId,
       invalid: e.amount !== undefined && (amount == null || amount <= 0),
@@ -99,7 +114,7 @@ export function ImportPage() {
 
   async function confirm(items: InboxItem[]) {
     setBusy(true);
-    const ctx = { accounts, rules: [...rules], habits };
+    const ctx = { accounts, rules: [...rules], habits, merchantRubros: [...merchantRubros], recurrings };
     let ok = 0;
     try {
       for (const it of items) {
@@ -275,7 +290,23 @@ export function ImportPage() {
                         {f?.unusual != null && <Flag tone="danger">Cargo inusual: tu promedio aquí es {formatMXN(f.unusual)}</Flag>}
                         {!p.accountId && e.accountId === undefined && <Flag tone="warn">Cuenta por asignar</Flag>}
                         {p.categoryRaw && <Flag tone="info">Byte sugirió «{p.categoryRaw}»</Flag>}
+                        {(e.rubroId ?? rubroOf(p)) === RUBRO_POR_CLASIFICAR && <Flag tone="warn">Rubro por clasificar</Flag>}
+                        {p.recurringId && <Flag tone="info">Recurrente: {recurrings.find((r) => r.id === p.recurringId)?.name ?? '—'}</Flag>}
                       </div>
+                      {rubros.length > 0 && (
+                        <label className="mt-3 block text-xs font-semibold text-ink-2">
+                          Rubro
+                          <RubroSelect
+                            className="mt-1"
+                            rubros={rubros}
+                            value={e.rubroId ?? rubroOf(p) ?? RUBRO_POR_CLASIFICAR}
+                            onChange={(id) => {
+                              const cat = categoryOfRubro(rubros, id);
+                              setE({ rubroId: id, ...(cat && p.direction === 'salida' ? { category: cat } : {}) });
+                            }}
+                          />
+                        </label>
+                      )}
                       <div className="mt-3 grid gap-2 sm:grid-cols-3">
                         {p.direction === 'salida' && !(p.type === 'retiro_efectivo' && accounts.some((a) => a.kind === 'efectivo')) && (
                           <label className="text-xs font-semibold text-ink-2">

@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "source": "gmail",
+  "detected_at": "2026-11-17T10:00:00-06:00",
+  "expenses": [
+    {
+      "id": "ejemplo-m4-nomina-13",
+      "date": "2026-11-13",
+      "merchant": "Banamex",
+      "description": "Pago de nómina (EJEMPLO)",
+      "amount_cents": 2590000,
+      "currency": "MXN",
+      "type": "transferencia",
+      "direction": "entrada",
+      "account_hint": "cuenta ****0000"
+    },
+    {
+      "id": "ejemplo-m4-nomina-28",
+      "date": "2026-11-27",
+      "merchant": "Banamex",
+      "description": "Pago de nómina (EJEMPLO, monto distinto)",
+      "amount_cents": 2545050,
+      "currency": "MXN",
+      "type": "transferencia",
+      "direction": "entrada",
+      "account_hint": "cuenta ****0000"
+    },
+    {
+      "id": "ejemplo-m4-spotify",
+      "date": "2026-11-05",
+      "merchant": "SPOTIFY MEXICO",
+      "description": "Suscripción (EJEMPLO)",
+      "amount_cents": 11900,
+      "currency": "MXN",
+      "type": "suscripcion",
+      "category_suggested": "streaming",
+      "account_hint": "tarjeta ****0000"
+    },
+    {
+      "id": "ejemplo-m4-uber-eats",
+      "date": "2026-11-08",
+      "merchant": "UBER EATS",
+      "description": "Pedido (EJEMPLO)",
+      "amount_cents": 28750,
+      "currency": "MXN",
+      "type": "compra",
+      "category_suggested": "restaurante"
+    },
+    {
+      "id": "ejemplo-m4-nuevo",
+      "date": "2026-11-09",
+      "merchant": "Ferretería La Tuerca (EJEMPLO)",
+      "description": "Compra (EJEMPLO)",
+      "amount_cents": 35000,
+      "currency": "MXN",
+      "type": "compra",
+      "category_suggested": "mascotas"
+    }
+  ]
+}
